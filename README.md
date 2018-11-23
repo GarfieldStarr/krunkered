@@ -1,3 +1,2 @@
-tampermonkey bro
-all u need man
-u got this
+You need tampermonkey.
+Userscript for tamper monkey (click) --> 

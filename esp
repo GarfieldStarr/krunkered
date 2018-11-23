@@ -1,0 +1,26 @@
+drawESP() {
+        for (const entity of this.hooks.entities.filter(x => !x.isYou)) {
+            if (entity.active) {
+                const me = this.hooks.world.camera.getWorldPosition()
+                const target = entity.objInstances.position.clone()
+                const dist = 1 - this.getDistance3D(me.x, me.y, me.z, target.x, target.y, target.z) / 600
+                if (20 * dist >= 1 && this.hooks.world.frustum.containsPoint(target)) {
+                    const scale = Math.max(.1, 1 - this.getDistance3D(me.x, me.y, me.z, target.x, target.y, target.z) / 600)
+                    const targetX = entity.hookedX
+                    const targetY = entity.hookedY + 60 * scale
+                    const offsetX = 80
+                    const offsetY = 180
+                    const color = this.colors[this.settings.espColor]
+                    if (this.settings.esp > 0) {
+                        this.rect(targetX - (offsetX * scale / 2) - (40 * scale / 2), targetY - (offsetY * scale / 2), 0, 0, 20 * scale, offsetY * scale, "black", false)
+                        this.rect(targetX - (offsetX * scale / 2) - (40 * scale / 2), targetY - (offsetY * scale / 2), 0, 0, 20 * scale, offsetY * scale, "green", true)
+                        this.rect(targetX - (offsetX * scale / 2) - (40 * scale / 2), targetY - (offsetY * scale / 2), 0, 0, 20 * scale, (entity.maxHealth - entity.health) / entity.maxHealth * offsetY * scale, "red", true)
+                        this.rect(targetX - (offsetX * scale / 2), targetY - (offsetY * scale / 2), 0, 0, offsetX * scale, offsetY * scale, "black", false)
+                        if (this.settings.esp === 1) {
+                            const fontSize = 26 * scale > 13 ? 13 : 26 * scale
+                            let spacing = scale < 0.5 ? 2 : 0
+                            this.text(`Name: ${entity.name} ${entity.clan ? `[${entity.clan}]` : ``} Lvl: ${entity.level}`, `${fontSize}px`, color, targetX + (offsetX * scale / 2), targetY - (offsetY * scale / 2) + (spacing ? spacing += 4 : 10 * scale))
+                            this.text(`Distance: ${~~this.getDistance3D(me.x, me.y, me.z, target.x, target.y, target.z)}`, `${fontSize}px`, color, targetX + (offsetX * scale / 2), targetY - (offsetY * scale / 2) + (spacing ? spacing += 7 : 25 * scale))
+                            this.text(`Health: ${entity.health}/${entity.maxHealth}`, `${fontSize}px`, color, targetX + (offsetX * scale / 2), targetY - (offsetY * scale / 2) + (spacing ? spacing += 7 : 40 * scale))
+                            this.text(`Weapon: ${entity.weapon.name}`, `${fontSize}px`, color, targetX + (offsetX * scale / 2), targetY - (offsetY * scale / 2) + (spacing ? spacing += 7 : 55 * scale))
+                            if (entity.weapon.ammo) this.text(`Ammo: ${entity.ammos[entity.weaponIndex]} / ${entity.weapon.ammo}`, `${fontSize}px`, color, targetX + (offsetX * scale / 2), targetY - (offsetY * scale / 2) + (spacing ? spacing += 7 : 70 * scale))
